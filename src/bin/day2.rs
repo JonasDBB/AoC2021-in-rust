@@ -1,11 +1,12 @@
-use std::fs::File;
-use std::io::{self, BufRead};
-use std::path::Path;
+use std::io::{self};
+mod read_lines;
+use read_lines::read_lines;
 
-fn main() {
-	let lines = get_input("inputs/input_day2.txt");
-	println!("{}", day2_1(&lines));
-	println!("{}", day2_2(&lines));
+fn main() -> io::Result<()> {
+	let lines = read_lines("inputs/input_day2.txt")?.map(Result::unwrap).collect();
+	println!("2_1: {}", day2_1(&lines));
+	println!("2_2: {}", day2_2(&lines));
+	Ok(())
 }
 
 fn day2_2(lines: &Vec<String>) -> i32 {
@@ -42,22 +43,4 @@ fn day2_1(lines: &Vec<String>) -> i32 {
 		}
 	}
 	depth * forward
-}
-
-fn get_input(input: &str) -> Vec<String> {
-	let mut ret: Vec<String> = Vec::new();
-	if let Ok(lines) = read_lines(input) {
-		for line in lines {
-			if let Ok(ln) = line {
-				ret.push(ln);
-			}
-		}
-	}
-	ret
-}
-
-fn read_lines<P>(filename: P) -> io::Result<io::Lines<io::BufReader<File>>>
-	where P: AsRef<Path>, {
-	let file = File::open(filename)?;
-	Ok(io::BufReader::new(file).lines())
 }
