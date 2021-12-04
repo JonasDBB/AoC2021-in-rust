@@ -3,14 +3,14 @@ mod read_lines;
 use read_lines::read_lines;
 
 fn main() -> io::Result<()> {
-	let input = read_lines("inputs/input_day3.txt")?.map(Result::unwrap).collect();
-	println!("3_1: {}", day3_1(&input));
-	println!("3_2: {}", day3_2(&input));
+	let lines = read_lines("inputs/input_day3.txt")?.map(Result::unwrap).collect();
+	println!("3_1: {}", day3_1(&lines));
+	println!("3_2: {}", day3_2(&lines));
 	Ok(())
 }
 
-fn day3_1(input: &Vec<String>) -> i32 {
-	let bins = get_binary_vecs(input);
+fn day3_1(lines: &Vec<String>) -> i32 {
+	let bins = get_binary_vecs(lines);
 	binary_to_dec(&bins.0) * binary_to_dec(&bins.1) // gamma * epsilon
 }
 
