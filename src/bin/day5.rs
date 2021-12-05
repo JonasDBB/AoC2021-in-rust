@@ -52,7 +52,7 @@ impl Field {
 }
 
 fn main() -> io::Result<()> {
-	let input:Vec<String> = read_lines("inputs/input_day5.txt")?.map(Result::unwrap).collect();
+	let input:Vec<String> = read_lines("inputs/example.txt")?.map(Result::unwrap).collect();
 	println!("{}", day5_1(&input));
 	Ok(())
 }
@@ -60,31 +60,35 @@ fn main() -> io::Result<()> {
 fn day5_1(input: &Vec<String>) -> i32 {
 	let mut all_lines: Vec<Line> = input.iter().map(|ln| Line::new(ln)).collect();
 	let mut field = Field::new();
-	// all_lines.retain(|line| line.bgn.x == line.end.x || line.bgn.y == line.end.y);
+	all_lines.retain(|line| line.bgn.x == line.end.x || line.bgn.y == line.end.y);
 	for line in all_lines {
 		draw_line(&line, &mut field);
 	}
 	count_higher_than_1(&field)
 }
 
+fn day5_2(input: &Vec<String>) -> i32 {
+
+}
+
 fn draw_line(line: &Line, field: &mut Field) {
 	if line.bgn.x == line.end.x {
-		if line.bgn.y < line.end.y {
+		if line.bgn.y <= line.end.y {
 			for i in line.bgn.y..=line.end.y {
 				field.f[i as usize][line.bgn.x as usize] += 1;
 			}
 		} else {
-			for i in (line.bgn.y..=line.end.y).rev() {
+			for i in line.end.y..=line.bgn.y {
 				field.f[i as usize][line.bgn.x as usize] += 1;
 			}
 		}
 	} else if line.bgn.y == line.end.y {
-		if line.bgn.x < line.end.x {
+		if line.bgn.x <= line.end.x {
 			for i in line.bgn.x..=line.end.x {
 				field.f[line.bgn.y as usize][i as usize] += 1;
 			}
 		} else {
-			for i in (line.bgn.x..=line.end.x).rev() {
+			for i in line.end.x..=line.bgn.x {
 				field.f[line.bgn.y as usize][i as usize] += 1;
 			}
 		}
