@@ -11,7 +11,14 @@ impl Coord {
 		let both: Vec<i32> = coords.split(",").map(|nr| nr.parse::<i32>().unwrap()).collect();
 		Coord {
 			x: both[0],
-			y: both[1]
+			y: both[1],
+		}
+	}
+
+	fn copy(&self) -> Coord {
+		Coord {
+			x: self.x,
+			y: self.y,
 		}
 	}
 
@@ -29,7 +36,7 @@ impl Line {
 	fn new(line: &String) -> Line { // with format of line = "x,y -> x,y"
 		Line {
 			bgn: Coord::new(line.split(" ").nth(0).unwrap()),
-			end: Coord::new(line.split(" ").nth(2).unwrap())
+			end: Coord::new(line.split(" ").nth(2).unwrap()),
 		}
 	}
 
@@ -52,7 +59,7 @@ impl Field {
 }
 
 fn main() -> io::Result<()> {
-	let input:Vec<String> = read_lines("inputs/example.txt")?.map(Result::unwrap).collect();
+	let input:Vec<String> = read_lines("inputs/input_day5.txt")?.map(Result::unwrap).collect();
 	println!("{}", day5_1(&input));
 	Ok(())
 }
@@ -67,30 +74,23 @@ fn day5_1(input: &Vec<String>) -> i32 {
 	count_higher_than_1(&field)
 }
 
-fn day5_2(input: &Vec<String>) -> i32 {
-
-}
+// fn day5_2(input: &Vec<String>) -> i32 {
+//
+// }
 
 fn draw_line(line: &Line, field: &mut Field) {
-	if line.bgn.x == line.end.x {
-		if line.bgn.y <= line.end.y {
-			for i in line.bgn.y..=line.end.y {
-				field.f[i as usize][line.bgn.x as usize] += 1;
-			}
-		} else {
-			for i in line.end.y..=line.bgn.y {
-				field.f[i as usize][line.bgn.x as usize] += 1;
-			}
+	let mut bgn = line.bgn.copy();
+	let mut end = line.end.copy();
+	if bgn.y > end.y {std::mem::swap(&mut bgn.y, &mut end.y)}
+	if bgn.x > end.x {std::mem::swap(&mut bgn.x, &mut end.x)}
+
+	if bgn.x == end.x {
+		for i in bgn.y..=end.y {
+			field.f[i as usize][bgn.x as usize] += 1;
 		}
-	} else if line.bgn.y == line.end.y {
-		if line.bgn.x <= line.end.x {
-			for i in line.bgn.x..=line.end.x {
-				field.f[line.bgn.y as usize][i as usize] += 1;
-			}
-		} else {
-			for i in line.end.x..=line.bgn.x {
-				field.f[line.bgn.y as usize][i as usize] += 1;
-			}
+	} else if bgn.y == end.y {
+		for i in bgn.x..=end.x {
+			field.f[bgn.y as usize][i as usize] += 1;
 		}
 	}
 }
