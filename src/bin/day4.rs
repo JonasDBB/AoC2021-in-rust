@@ -1,6 +1,5 @@
 use std::io::{self};
-mod read_lines;
-use read_lines::read_lines;
+use aoc::*;
 
 fn main() -> io::Result<()> {
 	let mut lines:Vec<String> = read_lines("inputs/input_day4.txt")?.map(Result::unwrap).collect();

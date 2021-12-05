@@ -1,6 +1,5 @@
 use std::io::{self};
-mod read_lines;
-use read_lines::read_lines;
+use aoc::*;
 
 fn main() -> io::Result<()> {
 	let lines = read_lines("inputs/input_day2.txt")?.map(Result::unwrap).collect();
