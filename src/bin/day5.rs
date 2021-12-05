@@ -60,7 +60,8 @@ impl Field {
 
 fn main() -> io::Result<()> {
 	let input:Vec<String> = read_lines("inputs/input_day5.txt")?.map(Result::unwrap).collect();
-	println!("{}", day5_1(&input));
+	println!("day 5_1: {}", day5_1(&input));
+	println!("day 5_2: {}", day5_2(&input));
 	Ok(())
 }
 
@@ -74,23 +75,42 @@ fn day5_1(input: &Vec<String>) -> i32 {
 	count_higher_than_1(&field)
 }
 
-// fn day5_2(input: &Vec<String>) -> i32 {
-//
-// }
+fn day5_2(input: &Vec<String>) -> i32 {
+	let all_lines: Vec<Line> = input.iter().map(|ln| Line::new(ln)).collect();
+	let mut field = Field::new();
+	for line in all_lines {
+		draw_line(&line, &mut field);
+	}
+
+	count_higher_than_1(&field)
+}
 
 fn draw_line(line: &Line, field: &mut Field) {
 	let mut bgn = line.bgn.copy();
 	let mut end = line.end.copy();
-	if bgn.y > end.y {std::mem::swap(&mut bgn.y, &mut end.y)}
-	if bgn.x > end.x {std::mem::swap(&mut bgn.x, &mut end.x)}
-
 	if bgn.x == end.x {
+		if bgn.y > end.y {std::mem::swap(&mut bgn.y, &mut end.y)}
 		for i in bgn.y..=end.y {
 			field.f[i as usize][bgn.x as usize] += 1;
 		}
 	} else if bgn.y == end.y {
+		if bgn.x > end.x {std::mem::swap(&mut bgn.x, &mut end.x)}
 		for i in bgn.x..=end.x {
 			field.f[bgn.y as usize][i as usize] += 1;
+		}
+	} else { // diagonal line only
+		let x_forward = if bgn.x <= end.x {true} else {false};
+		let mut j = bgn.x;
+		if bgn.y > end.y {
+			for i in (end.y..=bgn.y).rev() {
+				field.f[i as usize][j as usize] += 1;
+				if x_forward == true {j += 1} else {j -= 1}
+			}
+		} else {
+			for i in bgn.y..=end.y {
+				field.f[i as usize][j as usize] += 1;
+				if x_forward == true {j += 1} else {j -= 1}
+			}
 		}
 	}
 }
