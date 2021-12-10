@@ -19,17 +19,16 @@ fn day10_2(lines: &mut Vec<String>) -> u64 {
 
 fn get_score(line: &String) -> u64 {
 	let mut opening: Vec<char> = Vec::new();
-	let mut stupid_return_collector;
 	for c in line.chars() {
 		match c {
-			'(' => opening.push(c),
-			'[' => opening.push(c),
-			'{' => opening.push(c),
-			'<' => opening.push(c),
-			')' => stupid_return_collector = opening.pop(),
-			']' => stupid_return_collector = opening.pop(),
-			'}' => stupid_return_collector = opening.pop(),
-			'>' => stupid_return_collector = opening.pop(),
+			'(' => { opening.push(c); },
+			'[' => { opening.push(c); },
+			'{' => { opening.push(c); },
+			'<' => { opening.push(c); },
+			')' => { opening.pop(); },
+			']' => { opening.pop(); },
+			'}' => { opening.pop(); },
+			'>' => { opening.pop(); },
 			_ => panic!("found unknown char {}", c),
 		}
 	}
