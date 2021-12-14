@@ -1,6 +1,5 @@
 use std::io::{self};
 use aoc::*;
-use aoc::Coord;
 
 fn main() -> io::Result<()> {
 	// let lines: Vec<String> = read_lines("inputs/example.txt")?.map(Result::unwrap).collect();
@@ -27,7 +26,6 @@ fn main() -> io::Result<()> {
 		if fld.0 == 'x' && max_x == 0 { max_x = fld.1 * 2 + 1; }
 		if fld.0 == 'y' && max_y == 0 { max_y = fld.1 * 2 + 1; }
 	}
-	println!("{} {}", max_x, max_y);
 	let mut paper: Vec<Vec<char>> = vec![vec!['.'; max_x]; max_y];
 	for crd in coords { paper[crd.y][crd.x] = '#'; }
 	println!("day 13_1: {}", day13_1(&mut paper, &folds[0]));
@@ -35,6 +33,7 @@ fn main() -> io::Result<()> {
 	Ok(())
 }
 
+// this will print the output
 fn day13_2(paper: &mut Vec<Vec<char>>, folds: &Vec<(char, usize)>) {
 	for fld in folds {
 		if fld.0 == 'y'{ fold_horizontal(paper, fld.1); }
