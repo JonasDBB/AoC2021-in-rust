@@ -3,6 +3,7 @@ use aoc::*;
 use std::collections::HashMap;
 
 fn main() -> io::Result<()> {
+	// let mut lines: Vec<String> = read_lines("inputs/example.txt")?.map(Result::unwrap).collect();
 	let mut lines:Vec<String> = read_lines("inputs/input_day14.txt")?.map(Result::unwrap).collect();
 	let start_poly = lines[0].to_string();
 	lines.retain(|ln| ln.len() == 7);
@@ -11,6 +12,8 @@ fn main() -> io::Result<()> {
 		let mut splt = line.split(" ");
 		ele_map.insert(splt.next().unwrap(), splt.last().unwrap());
 	}
+	// println!("{:?}", ele_map);
+	// println!("14_1: {}", day14_1(&start_poly, &ele_map));
 	println!("day 14_1: {}", doshit(&start_poly, &ele_map, 10));
 	println!("day 14_2: {}", doshit(&start_poly, &ele_map, 40));
 	Ok(())
