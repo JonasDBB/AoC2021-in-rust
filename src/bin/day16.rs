@@ -1,31 +1,34 @@
 use std::io::{self};
 use aoc::*;
+use std::cmp;
 
 #[derive(Debug)]
 struct Packet {
 	version: u8,
 	type_id: u8,
-	literal: u64,
+	value: u64,
 	packets: Vec<Packet>,
 	len: usize,
 }
 
 impl Packet {
 	fn new(bin: &Vec<char>, start: usize) -> Packet {
-		let ver = u8::from_str_radix(
+		let version = u8::from_str_radix(
 			&bin[start..(start + 3)].iter().collect::<String>(), 2).unwrap();
-		let typ = u8::from_str_radix(
+		let type_id = u8::from_str_radix(
 			&bin[(start + 3)..(start + 6)].iter().collect::<String>(), 2).unwrap();
 		let mut lit = "".to_string();
-		let mut vec= Vec::new();
+		let mut sub_packets = Vec::new();
 		let mut index = start + 6;
-		if typ == 4 {
+		let mut value = 0;
+		if type_id == 4 {
 			let mut segment_start = '1';
 			while segment_start == '1' {
 				segment_start = bin[index];
 				for c in bin[(index + 1)..(index + 5)].iter() { lit.push(*c); }
 				index += 5;
 			}
+			value = u64::from_str_radix(&lit, 2).unwrap();
 		} else {
 			let mode = bin[index];
 			index += 1;
@@ -37,7 +40,7 @@ impl Packet {
 				while index - start_section < byte_len {
 					let pckt = Packet::new(bin, index);
 					index += &pckt.len;
-					vec.push(pckt);
+					sub_packets.push(pckt);
 				}
 			} else { // mode == '1'
 				let packet_n = usize::from_str_radix(
@@ -46,15 +49,41 @@ impl Packet {
 				for _ in 0..packet_n {
 					let pckt = Packet::new(bin, index);
 					index += &pckt.len;
-					vec.push(pckt);
+					sub_packets.push(pckt);
 				}
+			}
+			match type_id {
+				// sum
+				0 => { for pckt in &sub_packets { value += pckt.value; } },
+				// product
+				1 => {
+					value = 1;
+					for pckt in &sub_packets { value *= pckt.value; }
+				},
+				// minimum
+				2 => {
+					value = sub_packets[0].value;
+					for pckt in &sub_packets { value = cmp::min(value, pckt.value); }
+				},
+				// maximum
+				3 => {
+					value = sub_packets[0].value;
+					for pckt in &sub_packets { value = cmp::max(value, pckt.value); }
+				},
+				// greater
+				5 => { value = if sub_packets[0].value > sub_packets[1].value {1} else {0}; },
+				// lesser
+				6 => { value = if sub_packets[0].value < sub_packets[1].value {1} else {0}; },
+				// equal
+				7 => { value = if sub_packets[0].value == sub_packets[1].value {1} else {0}; },
+				_ => panic!("found type id {}", type_id),
 			}
 		}
 		Packet {
-			version: ver,
-			type_id: typ,
-			literal: if lit != "" { u64::from_str_radix(&lit, 2).unwrap() } else { 0 },
-			packets: vec,
+			version,
+			type_id,
+			value,
+			packets: sub_packets,
 			len: index - start,
 		}
 	}
@@ -71,11 +100,11 @@ impl Packet {
 }
 
 fn main() -> io::Result<()> {
-	// let lines: Vec<String> = read_lines("inputs/example.txt")?.map(Result::unwrap).collect();
 	let lines:Vec<String> = read_lines("inputs/input_day16.txt")?.map(Result::unwrap).collect();
 	let binary: Vec<char> = lines[0].chars().map(|c| hex_to_bin(c)).collect::<String>().chars().collect();
 	let packet = Packet::new(&binary, 0);
 	println!("day 16_1: {}", packet.version_sum());
+	println!("day 16_2: {}", packet.value);
 	Ok(())
 }
 
